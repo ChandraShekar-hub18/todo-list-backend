@@ -11,6 +11,6 @@ app.use(bodyParser.json());
 //Routes
 
 app.use("/api/auth", authRoutes);
-app.use("/api/todos", todosRoutes);
+app.use("/api/todo", todosRoutes);
 
 module.exports = app;

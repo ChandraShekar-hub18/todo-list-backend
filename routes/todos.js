@@ -1,19 +1,26 @@
 const express = require("express");
 const Todo = require("./../models/todoModel");
 const auth = require("../middleware/authJWT");
+const {
+  getAllTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+} = require("../controllers/todoController");
 
 const router = express.Router();
 
 //Get all todo for logged in user
-router.get("/", auth, async (req, res) => {
-  try {
-    const todos = await Todo.findOne({ userId: req.user.id });
-    res.status(200).json({ todos });
-  } catch (err) {
-    res.status(500).json({
-      message: "Enable to get all todos",
-    });
-  }
-});
+router.get("/", auth, getAllTodos);
+
+//Create a New Todo
+router.post("/", auth, createTodo);
+
+//Update a Todo
+router.put("/:id", auth, updateTodo);
+
+//Delete Todo data
+
+router.delete("/:id", auth, deleteTodo);
 
 module.exports = router;
