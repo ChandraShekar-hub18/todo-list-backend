@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Todo = require("./../models/todoModel");
 
 exports.getAllTodos = async (req, res) => {
@@ -23,7 +24,9 @@ exports.createTodo = async (req, res) => {
       dueDate,
       priority,
     });
-    const todo = await newTodo.save();
+    console.log(newTodo);
+    Todo.push(newTodo);
+    const todo = await Todo.save();
     res.status(201).json(todo);
   } catch (err) {
     res.status(404).json({
@@ -69,24 +72,40 @@ exports.updateTodo = async (req, res) => {
 
 exports.deleteTodo = async (req, res) => {
   try {
-    const todo = await Todo.findById(req.params.id);
-
-    if (!todo)
-      return res.status(404).json({
-        message: "Todo is not found Enter valid Id!",
+    // Ensure the ID is in the correct format
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid ID format",
       });
-    console.log(req.user.id);
+    }
+
+    // Find the todo item by ID
+    const todo = await Todo.findById(id);
+    console.log(todo);
+
+    if (!todo) {
+      return res.status(404).json({
+        message: "Todo not found. Enter a valid ID!",
+      });
+    }
+
+    // Ensure the user ID matches the todo's user ID
     if (todo.userId.toString() !== req.user.id) {
       return res.status(401).json({
         message: "Unauthorized access!",
       });
     }
-    await Todo.deleteOne(todo);
-    res.status(200).json({
-      message: " Todo deleted successfully!",
+
+    // Delete the todo item
+    await Todo.deleteOne({ _id: id });
+
+    return res.status(200).json({
+      message: "Todo deleted successfully!",
     });
   } catch (err) {
-    res.status(500).json({
+    console.error("Error deleting todo:", err);
+    return res.status(500).json({
       message: "Internal Server Error",
       err,
     });
