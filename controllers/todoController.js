@@ -15,18 +15,20 @@ exports.getAllTodos = async (req, res) => {
 
 exports.createTodo = async (req, res) => {
   const { title, description, dueDate, priority } = req.body;
-  console.log(title);
+  console.log(req.body);
   try {
     const newTodo = new Todo({
       userId: req.user.id,
       title,
       description,
       dueDate,
-      priority,
     });
     console.log(newTodo);
-    Todo.push(newTodo);
-    const todo = await Todo.save();
+
+    const todo = await newTodo
+      .save()
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
     res.status(201).json(todo);
   } catch (err) {
     res.status(404).json({
