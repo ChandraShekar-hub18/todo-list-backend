@@ -4,6 +4,12 @@ const { registerUser, loginUser } = require("../controllers/userController");
 
 const router = express.Router();
 
+router.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Hello world",
+  });
+});
+
 //Register
 
 router.post("/register", registerUser);

@@ -10,6 +10,7 @@ const {
 
 const router = express.Router();
 
+
 //Get all todo for logged in user
 router.get("/", auth, getAllTodos);
 
